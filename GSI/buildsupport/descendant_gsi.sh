@@ -67,14 +67,17 @@ chmod +x device/phh/treble/generate.sh
 cp vendor/descendant/GSI/buildsupport/descendant.mk device/phh/treble/
 }
 
+patcher() {
 echo "Applying GSI patches.."
 bash "apply-patch.sh" patches
+}
 
 echo "Exporting CCACHE vars.."
 export USE_CCACHE=1
 export CCACHE_COMPRESS=1
 
 read -p "Do you want to include GApps in this image? " gapps
+
 if [[ $gapps == "y"* ]];then
 echo '$(call-inherit vendor/gapps/config.mk)' >> device/phh/treble/descendant.mk
 fi
@@ -90,8 +93,9 @@ buildVariant() {
 }
 
 if [[ $1 == "--no-sync" ]];then
+patcher
 buildVariant $treble_target
 else
-buildVariant $treble_target
 syncer
+buildVariant $treble_target
 fi
